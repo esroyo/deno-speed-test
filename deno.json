@@ -1,8 +1,8 @@
 {
     "tasks": {
         "coverage": "rm -rf coverage && deno task test --reporter=dot --coverage=coverage && deno coverage --lcov --output=coverage.lcov coverage && genhtml -o coverage/report coverage.lcov",
-        "deploy:prod": "deployctl deploy --prod --project=speedtest --entrypoint src/main.ts --exclude=coverage",
-        "deploy": "deployctl deploy --project=speedtest --entrypoint src/main.ts --exclude=coverage",
+        "deploy:prod": "deployctl deploy --prod --project=speed-test --entrypoint src/main.ts --exclude=coverage",
+        "deploy": "deployctl deploy --project=speed-test --entrypoint src/main.ts --exclude=coverage",
         "dev": "deno serve --watch -R --allow-env --allow-read src/main.ts",
         "fmt": "deno fmt src",
         "test": "deno test --allow-env --allow-read"

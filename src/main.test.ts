@@ -40,7 +40,10 @@ Deno.test('Download endpoint - default bytes (0)', async () => {
         'application/octet-stream',
     );
     assertEquals(response.headers.get('access-control-allow-origin'), '*');
-    assertEquals(response.headers.get('cache-control'), 'no-store, no-transform');
+    assertEquals(
+        response.headers.get('cache-control'),
+        'no-store, no-transform',
+    );
     assertExists(response.headers.get('server-timing'));
     assertExists(response.headers.get('cf-meta-request-time'));
 
