@@ -29,10 +29,13 @@ function generateContentStream(numBytes = 0): ReadableStream<Uint8Array> {
 // Download endpoint handler
 async function handleDown(req: Request): Promise<Response> {
     const reqTime = new Date();
-    const qs = new URL(req.url).searchParams;
+    const url = new URL(req.url);
 
-    const numBytes = qs.get('bytes')
-        ? Math.min(config.MAX_BYTES, Math.abs(Number(qs.get('bytes'))))
+    const numBytes = url.searchParams.has('bytes')
+        ? Math.min(
+            config.MAX_BYTES,
+            Math.abs(Number(url.searchParams.get('bytes'))),
+        )
         : config.DEFAULT_NUM_BYTES;
 
     const response = new Response(generateContentStream(numBytes));
@@ -45,7 +48,7 @@ async function handleDown(req: Request): Promise<Response> {
     response.headers.set('cf-meta-request-time', reqTime.getTime().toString());
     response.headers.set(
         'access-control-expose-headers',
-        'cf-meta-request-time',
+        'server-timing,cf-meta-request-time',
     );
 
     // Add Server-Timing header (duration in milliseconds)
@@ -73,7 +76,7 @@ async function handleUp(req: Request): Promise<Response> {
     response.headers.set('cf-meta-request-time', reqTime.getTime().toString());
     response.headers.set(
         'access-control-expose-headers',
-        'cf-meta-request-time',
+        'server-timing,cf-meta-request-time',
     );
 
     // Add Server-Timing header (duration in milliseconds)
