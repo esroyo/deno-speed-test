@@ -55,7 +55,7 @@ async function handleDown(req: Request): Promise<Response> {
     );
 
     // Add Server-Timing header (duration in milliseconds)
-    const processingTime = Math.max(1, performance.now() - reqStart);
+    const processingTime = performance.now() - reqStart;
     response.headers.set(
         'server-timing',
         `cfRequestDuration;dur=${processingTime}`,
@@ -86,7 +86,7 @@ async function handleUp(req: Request): Promise<Response> {
     );
 
     // Add Server-Timing header (duration in milliseconds)
-    const processingTime = Math.max(1, performance.now() - reqStart);
+    const processingTime = performance.now() - reqStart;
     response.headers.set(
         'server-timing',
         `cfRequestDuration;dur=${processingTime}`,
