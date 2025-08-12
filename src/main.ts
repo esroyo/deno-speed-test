@@ -28,6 +28,7 @@ function generateContentStream(numBytes = 0): ReadableStream<Uint8Array> {
 
 // Download endpoint handler
 async function handleDown(req: Request): Promise<Response> {
+    const reqStart = performance.now();
     const reqTime = new Date();
     const url = new URL(req.url);
 
@@ -52,7 +53,7 @@ async function handleDown(req: Request): Promise<Response> {
     );
 
     // Add Server-Timing header (duration in milliseconds)
-    const processingTime = Date.now() - reqTime.getTime();
+    const processingTime = Math.max(1, performance.now() - reqStart);
     response.headers.set(
         'server-timing',
         `cfRequestDuration;dur=${processingTime}`,
@@ -63,6 +64,7 @@ async function handleDown(req: Request): Promise<Response> {
 
 // Upload endpoint handler
 async function handleUp(req: Request): Promise<Response> {
+    const reqStart = performance.now();
     const reqTime = new Date();
 
     // Consume the request body (for upload testing)
@@ -80,7 +82,7 @@ async function handleUp(req: Request): Promise<Response> {
     );
 
     // Add Server-Timing header (duration in milliseconds)
-    const processingTime = Date.now() - reqTime.getTime();
+    const processingTime = Math.max(1, performance.now() - reqStart);
     response.headers.set(
         'server-timing',
         `cfRequestDuration;dur=${processingTime}`,
