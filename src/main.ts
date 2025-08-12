@@ -40,10 +40,12 @@ async function handleDown(req: Request): Promise<Response> {
         : config.DEFAULT_NUM_BYTES;
 
     const response = new Response(generateContentStream(numBytes));
+    const allowOrigin = req.headers.get('origin') || '*';
 
     // Set CORS and caching headers
-    response.headers.set('access-control-allow-origin', '*');
-    response.headers.set('timing-allow-origin', '*');
+    response.headers.set('access-control-allow-origin', allowOrigin);
+    response.headers.set('access-control-allow-credentials', 'true');
+    response.headers.set('timing-allow-origin', allowOrigin);
     response.headers.set('cache-control', 'no-store, no-transform');
     response.headers.set('content-type', 'application/octet-stream');
     response.headers.set('cf-meta-request-time', reqTime.getTime().toString());
@@ -71,10 +73,12 @@ async function handleUp(req: Request): Promise<Response> {
     await req.arrayBuffer();
 
     const response = new Response('ok');
+    const allowOrigin = req.headers.get('origin') || '*';
 
     // Set CORS headers
-    response.headers.set('access-control-allow-origin', '*');
-    response.headers.set('timing-allow-origin', '*');
+    response.headers.set('access-control-allow-origin', allowOrigin);
+    response.headers.set('access-control-allow-credentials', 'true');
+    response.headers.set('timing-allow-origin', allowOrigin);
     response.headers.set('cf-meta-request-time', reqTime.getTime().toString());
     response.headers.set(
         'access-control-expose-headers',
@@ -92,17 +96,25 @@ async function handleUp(req: Request): Promise<Response> {
 }
 
 // Main request handler
-export default {
-    fetch: route([
-        {
-            pattern: new URLPattern({ pathname: '*/__down' }),
-            method: 'GET',
-            handler: handleDown,
+const handler = route([
+    {
+        pattern: new URLPattern({ pathname: '*/__down' }),
+        method: 'GET',
+        handler: handleDown,
+    },
+    {
+        pattern: new URLPattern({ pathname: '*/__up' }),
+        method: 'POST',
+        handler: handleUp,
+    },
+    {
+        pattern: new URLPattern({ pathname: '/' }),
+        method: 'GET',
+        handler: async (_req) => {
+           return new Response(await Deno.readFile('./index.html'), { headers: { 'content-type': 'text/html' } }); 
         },
-        {
-            pattern: new URLPattern({ pathname: '*/__up' }),
-            method: 'POST',
-            handler: handleUp,
-        },
-    ], () => new Response('Not Found', { status: 404 })),
-} satisfies Deno.ServeDefaultExport;
+    }
+], () => new Response('Not Found', { status: 404 }));
+
+// HTTP server
+Deno.serve(handler);
