@@ -1,5 +1,7 @@
 # Deno speed test
 
+[![codecov](https://codecov.io/gh/esroyo/deno-speed-test/graph/badge.svg?token=C01UTG74LH)](https://codecov.io/gh/esroyo/deno-speed-test)
+
 ## Motivation
 
 This is a **standalone clone** of Cloudflare's speed test infrastructure, designed to work on networks without internet connectivity.
