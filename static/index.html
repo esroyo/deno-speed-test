@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🦕 Speed test</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+    }
+
+    .container {
+      background: white;
+      border: 1px solid #ddd;
+      padding: 40px;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: normal;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .controls {
+      margin-bottom: 30px;
+    }
+
+    .start-button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .start-button:hover {
+      background: #0056b3;
+    }
+
+    .start-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .status {
+      font-size: 16px;
+      margin-bottom: 20px;
+      color: #666;
+      min-height: 20px;
+    }
+
+    .results {
+      display: none;
+    }
+
+    .results.visible {
+      display: block;
+    }
+
+    .metric {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+    }
+
+    .metric-label {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .metric-value {
+      font-size: 28px;
+      font-weight: normal;
+      color: #333;
+    }
+
+    .metric-unit {
+      font-size: 16px;
+      color: #666;
+      margin-left: 5px;
+    }
+
+    .secondary-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .secondary-metric {
+      padding: 10px;
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      text-align: center;
+    }
+
+    .secondary-metric-label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 3px;
+    }
+
+    .secondary-metric-value {
+      font-size: 16px;
+      font-weight: normal;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">🦕 Speed test</h1>
+    
+    <div class="controls">
+      <button id="start-button" class="start-button">Start test</button>
+    </div>
+
+    <div id="status" class="status"></div>
+
+    <div id="results" class="results">
+      <div class="metric">
+        <div class="metric-label">Download</div>
+        <div class="metric-value">
+          <span id="download-speed">--</span>
+          <span class="metric-unit">Mbps</span>
+        </div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-label">Upload</div>
+        <div class="metric-value">
+          <span id="upload-speed">--</span>
+          <span class="metric-unit">Mbps</span>
+        </div>
+      </div>
+
+      <div class="secondary-metrics">
+        <div class="secondary-metric">
+          <div class="secondary-metric-label">Latency</div>
+          <div class="secondary-metric-value">
+            <span id="latency">--</span> ms
+          </div>
+        </div>
+        <div class="secondary-metric">
+          <div class="secondary-metric-label">Jitter</div>
+          <div class="secondary-metric-value">
+            <span id="jitter">--</span> ms
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import SpeedTest from './speedtest.bundle.mjs';
+    //import SpeedTest from 'https://esm.sh/@cloudflare/speedtest@1.6.0&bundle';
+
+    const startButton = document.getElementById('start-button');
+    const statusEl = document.getElementById('status');
+    const resultsEl = document.getElementById('results');
+    
+    const downloadSpeedEl = document.getElementById('download-speed');
+    const uploadSpeedEl = document.getElementById('upload-speed');
+    const latencyEl = document.getElementById('latency');
+    const jitterEl = document.getElementById('jitter');
+
+    //const REL_API_URL = 'https://speed.cloudflare.com';
+    const REL_API_URL = window.location.origin;
+    const engine = new SpeedTest({
+      autoStart: false,
+      downloadApiUrl: `${REL_API_URL}/__down`,
+      uploadApiUrl: `${REL_API_URL}/__up`,
+      estimatedServerTime: 10,
+      logMeasurementApiUrl: null,
+      logAimApiUrl: null,
+      turnServerUri: null,
+      turnServerCredsApiUrl: `${REL_API_URL}/__turn`,
+      turnServerCredsApiIncludeCredentials: true,
+      turnServerUser: null,
+      turnServerPass: null,
+      rpkiInvalidHost: null,
+      cfTraceUrl: null,
+      includeCredentials: false,
+    });
+
+    function formatSpeed(bps) {
+      if (!bps || bps === 0) return '--';
+      const mbps = bps / (1024 * 1024);
+      return mbps.toFixed(2);
+    }
+
+    function updateResults(results) {
+      if (results.download) {
+        downloadSpeedEl.textContent = formatSpeed(results.download);
+      }
+      if (results.upload) {
+        uploadSpeedEl.textContent = formatSpeed(results.upload);
+      }
+      if (results.latency) {
+        latencyEl.textContent = results.latency.toFixed(2);
+      }
+      if (results.jitter) {
+        jitterEl.textContent = results.jitter.toFixed(2);
+      }
+    }
+
+    engine.onRunningChange = running => {
+      if (running) {
+        statusEl.textContent = 'Testing your connection...';
+        startButton.disabled = true;
+        startButton.textContent = 'Testing...';
+        resultsEl.classList.remove('visible');
+      } else {
+        statusEl.textContent = 'Test completed!';
+        startButton.disabled = false;
+        startButton.textContent = 'Run again';
+        resultsEl.classList.add('visible');
+      }
+    };
+
+    engine.onResultsChange = (ev) => {
+      if (!engine.isFinished) {
+        updateResults(engine.results.getSummary());
+        // Show partial results during test
+        if (!resultsEl.classList.contains('visible')) {
+          resultsEl.classList.add('visible');
+        }
+      }
+    };
+
+    engine.onFinish = results => {
+      const summary = results.getSummary();
+      updateResults(summary);
+      console.log('Test completed:', summary);
+      console.log('Scores:', results.getScores());
+    };
+
+    engine.onError = (e) => {
+      console.error('Speed test error:', e);
+      if (e.match(/\bturn/)) return;
+      statusEl.textContent = 'Test failed. Please try again.';
+      startButton.disabled = false;
+      startButton.textContent = 'Start test';
+    };
+
+    startButton.onclick = () => {
+      // Reset results
+      downloadSpeedEl.textContent = '--';
+      uploadSpeedEl.textContent = '--';
+      latencyEl.textContent = '--';
+      jitterEl.textContent = '--';
+
+      engine.restart();
+    };
+  </script>
+</body>
+</html>

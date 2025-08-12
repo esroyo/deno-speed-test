@@ -1,8 +1,16 @@
 # Deno speed test
 
-Similar to https://github.com/cloudflare/worker-speedtest-template
+## Motivation
 
-Isolate for measuring download / upload connection speed from the client side, using the [Performance Timing API](https://w3c.github.io/perf-timing-primer/).
+This is a **standalone clone** of Cloudflare's speed test infrastructure, designed to work on networks without internet connectivity.
+
+Cloudflare's speed test consists of a [server template](https://github.com/cloudflare/worker-speedtest-template), [client library](https://github.com/cloudflare/speedtest), and [web UI](https://speed.cloudflare.com/) (not open-sourced). This project bundles all components together using Deno and the standard library.
+
+**Main objective**: Enable speed testing on isolated networks such as local networks, community networks like [Guifi.net](http://guifi.net/), or any environment without internet access.
+
+**Usage**: Run `deno task dev` to start the server with a simple web interface at `http://localhost:8000`.
+
+**Live demo**: [https://speed-test.deno.dev/](https://speed-test.deno.dev/)
 
 ### API Reference
 

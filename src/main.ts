@@ -1,4 +1,4 @@
-import { route } from '@std/http';
+import { route, serveDir } from '@std/http';
 import { config } from './global.ts';
 
 // Generate content stream for download endpoint
@@ -95,26 +95,29 @@ async function handleUp(req: Request): Promise<Response> {
     return response;
 }
 
-// Main request handler
-const handler = route([
-    {
-        pattern: new URLPattern({ pathname: '*/__down' }),
-        method: 'GET',
-        handler: handleDown,
-    },
-    {
-        pattern: new URLPattern({ pathname: '*/__up' }),
-        method: 'POST',
-        handler: handleUp,
-    },
-    {
-        pattern: new URLPattern({ pathname: '/' }),
-        method: 'GET',
-        handler: async (_req) => {
-           return new Response(await Deno.readFile('./index.html'), { headers: { 'content-type': 'text/html' } }); 
-        },
-    }
-], () => new Response('Not Found', { status: 404 }));
+const serveDirOptions = {
+    fsRoot: `${import.meta.dirname}/../static/`,
+    showIndex: true,
+    quiet: true,
+};
 
-// HTTP server
-Deno.serve(handler);
+// Main request handler
+export default {
+    fetch: route([
+        {
+            pattern: new URLPattern({ pathname: '*/__down' }),
+            method: 'GET',
+            handler: handleDown,
+        },
+        {
+            pattern: new URLPattern({ pathname: '*/__up' }),
+            method: 'POST',
+            handler: handleUp,
+        },
+    ], (req) => {
+        if (req.method === 'GET') {
+            return serveDir(req, serveDirOptions);
+        }
+        return new Response('Not found', { status: 404 });
+    }),
+} satisfies Deno.ServeDefaultExport;
