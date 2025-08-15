@@ -1,5 +1,11 @@
 ### 2025.08.15
 
+#### @esroyo/deno-speed-test 0.1.2 (patch)
+
+- fix: use fetch when path for static remote files
+
+### 2025.08.15
+
 #### @esroyo/deno-speed-test 0.1.1 (patch)
 
 - fix: path for the static files
