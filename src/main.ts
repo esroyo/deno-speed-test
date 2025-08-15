@@ -98,11 +98,11 @@ async function handleUp(req: Request): Promise<Response> {
     return response;
 }
 
-const staticRoot = new URL('../static/', import.meta.url).toString();
+const staticRoot = new URL('../static/', import.meta.url);
 const serveDirOptions = {
-    fsRoot: staticRoot.startsWith('file:')
+    fsRoot: staticRoot.protocol === 'file:'
         ? fromFileUrl(staticRoot)
-        : staticRoot,
+        : staticRoot.toString(),
     showIndex: true,
     quiet: true,
 };
@@ -122,7 +122,18 @@ const serverHandler: { fetch: (req: Request) => Promise<Response> | Response } =
                 handler: handleUp,
             },
         ], (req) => {
+            const url = new URL(req.url);
             if (req.method === 'GET') {
+                if (staticRoot.protocol === 'https:') {
+                    return fetch(
+                        new URL(
+                            url.pathname === '/' && serveDirOptions.showIndex
+                                ? './index.html'
+                                : `.${url.pathname}`,
+                            staticRoot,
+                        ),
+                    );
+                }
                 return serveDir(req, serveDirOptions);
             }
             return new Response('Not found', { status: 404 });
