@@ -1,14 +1,14 @@
-name: release
+name: bump
 permissions:
   contents: write
   pull-requests: write
 on:
   push:
     tags:
-      - "release"
+      - "bump"
   workflow_dispatch:
 jobs:
-  release:
+  bump:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
