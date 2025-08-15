@@ -1,6 +1,6 @@
 {
     "name": "@esroyo/deno-speed-test",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "A standalone speed test server for networks without internet connectivity",
     "license": "MIT",
     "repository": {
