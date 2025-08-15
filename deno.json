@@ -1,8 +1,20 @@
 {
+    "name": "@esroyo/deno-speed-test",
+    "version": "0.1.0",
+    "description": "A standalone speed test server for networks without internet connectivity",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/esroyo/deno-speed-test.git"
+    },
+    "exports": {
+        ".": "./src/main.ts"
+    },
     "tasks": {
         "coverage": "rm -rf coverage && deno task test --reporter=dot --coverage=coverage && deno coverage --lcov --output=coverage.lcov --exclude='static' coverage && genhtml -o coverage/report coverage.lcov",
-        "dev": "deno serve --watch -R --allow-env --allow-read --allow-net --allow-sys src/main.ts",
+        "dev": "deno run --watch -R --allow-env --allow-read --allow-net src/main.ts",
         "fmt": "deno fmt src",
+        "release": "git tag release && git push origin release && git tag -d release",
         "test": "deno test --allow-env --allow-read"
     },
     "fmt": {
@@ -11,7 +23,29 @@
     },
     "imports": {
         "@std/assert": "jsr:@std/assert@1.0.6",
+        "@std/cli": "jsr:@std/cli@1.0.6",
         "@std/dotenv": "jsr:@std/dotenv@0.225.2",
         "@std/http": "jsr:@std/http@1.0.7"
+    },
+    "lint": {
+        "rules": {
+            "exclude": ["require-await"]
+        },
+        "exclude": [
+            "static"
+        ]
+    },
+    "publish": {
+        "exclude": [
+            "**/*_test.ts",
+            "**/*.test.ts",
+            "**/test_*.ts",
+            "**/*.snap",
+            ".github/",
+            "coverage/",
+            "testdata/",
+            "*.lcov",
+            ".*"
+        ]
     }
 }

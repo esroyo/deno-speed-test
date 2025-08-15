@@ -1,8 +1,8 @@
 import { assert, assertEquals, assertExists } from 'jsr:@std/assert';
 import { config } from './global.ts';
-import main from './main.ts';
+import { serverHandler } from './main.ts';
 
-const { fetch: handler } = main;
+const { fetch: handler } = serverHandler;
 
 // Test helper to read stream content
 async function readStreamContent(

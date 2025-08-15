@@ -1,7 +1,8 @@
 {
-  "version": "4",
+  "version": "5",
   "specifiers": {
     "jsr:@std/assert@*": "1.0.13",
+    "jsr:@std/cli@1.0.6": "1.0.6",
     "jsr:@std/cli@^1.0.6": "1.0.20",
     "jsr:@std/dotenv@0.225.2": "0.225.2",
     "jsr:@std/encoding@^1.0.5": "1.0.10",
@@ -21,6 +22,9 @@
         "jsr:@std/internal@^1.0.6"
       ]
     },
+    "@std/cli@1.0.6": {
+      "integrity": "d22d8b38c66c666d7ad1f2a66c5b122da1704f985d3c47f01129f05abb6c5d3d"
+    },
     "@std/cli@1.0.20": {
       "integrity": "a8c384a2c98cec6ec6a2055c273a916e2772485eb784af0db004c5ab8ba52333"
     },
@@ -36,7 +40,7 @@
     "@std/http@1.0.7": {
       "integrity": "9b904fc256678a5c9759f1a53a24a3fdcc59d83dc62099bb472683b6f819194c",
       "dependencies": [
-        "jsr:@std/cli",
+        "jsr:@std/cli@^1.0.6",
         "jsr:@std/encoding",
         "jsr:@std/fmt",
         "jsr:@std/media-types",
@@ -67,6 +71,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@1.0.6",
+      "jsr:@std/cli@1.0.6",
       "jsr:@std/dotenv@0.225.2",
       "jsr:@std/http@1.0.7"
     ]

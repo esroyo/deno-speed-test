@@ -1,4 +1,6 @@
+#!/usr/bin/env -S deno run --allow-net --allow-read
 import { route, serveDir } from '@std/http';
+import { parseArgs } from '@std/cli/parse-args';
 import { config } from './global.ts';
 
 // Generate content stream for download endpoint
@@ -102,22 +104,120 @@ const serveDirOptions = {
 };
 
 // Main request handler
-export default {
-    fetch: route([
-        {
-            pattern: new URLPattern({ pathname: '*/__down' }),
-            method: 'GET',
-            handler: handleDown,
+const serverHandler: { fetch: (req: Request) => Promise<Response> | Response } =
+    {
+        fetch: route([
+            {
+                pattern: new URLPattern({ pathname: '*/__down' }),
+                method: 'GET',
+                handler: handleDown,
+            },
+            {
+                pattern: new URLPattern({ pathname: '*/__up' }),
+                method: 'POST',
+                handler: handleUp,
+            },
+        ], (req) => {
+            if (req.method === 'GET') {
+                return serveDir(req, serveDirOptions);
+            }
+            return new Response('Not found', { status: 404 });
+        }),
+    };
+
+// CLI functionality
+function startServer(
+    options: { port?: number; hostname?: string } = {},
+): Deno.HttpServer {
+    const { port = 8000, hostname = '0.0.0.0' } = options;
+
+    console.log(`Press Ctrl+C to stop the server`);
+
+    return Deno.serve({
+        port,
+        hostname,
+        onListen: ({ port, hostname }) => {
+            console.log(
+                `Server successfully started on http://${hostname}:${port}`,
+            );
         },
-        {
-            pattern: new URLPattern({ pathname: '*/__up' }),
-            method: 'POST',
-            handler: handleUp,
+    }, serverHandler.fetch);
+}
+
+// Parse command line arguments for CLI usage
+function parseCliArgs() {
+    const args = parseArgs(Deno.args, {
+        string: ['port', 'hostname', 'host'],
+        boolean: ['help'],
+        alias: {
+            'h': 'help',
+            'p': 'port',
         },
-    ], (req) => {
-        if (req.method === 'GET') {
-            return serveDir(req, serveDirOptions);
-        }
-        return new Response('Not found', { status: 404 });
-    }),
-} satisfies Deno.ServeDefaultExport;
+        default: {
+            port: '8000',
+            hostname: '0.0.0.0',
+        },
+    });
+
+    return {
+        help: args.help,
+        port: parseInt(args.port as string, 10),
+        hostname: args.hostname || args.host || '0.0.0.0',
+    };
+}
+
+function showHelp() {
+    console.log(`🦕 Deno Speed Test
+
+USAGE:
+    deno run --allow-net --allow-read jsr:@esroyo/deno-speed-test [OPTIONS]
+
+OPTIONS:
+    -h, --help              Show this help message
+    -p, --port <PORT>       Server port (default: 8000)
+    --hostname <HOST>       Server hostname (default: 0.0.0.0)
+
+EXAMPLES:
+    # Start server on default port 8000
+    deno run --allow-net --allow-read jsr:@esroyo/deno-speed-test
+
+    # Start server on port 3000
+    deno run --allow-net --allow-read jsr:@esroyo/deno-speed-test --port 3000
+
+    # Start server on specific hostname
+    deno run --allow-net --allow-read jsr:@esroyo/deno-speed-test --hostname 127.0.0.1
+
+DESCRIPTION:
+    A standalone speed test server that works on networks without internet connectivity.
+    Once started, visit http://localhost:<port>/ to access the web interface.
+`);
+}
+
+// Run as CLI when this module is the main module
+if (import.meta.main) {
+    const args = parseCliArgs();
+
+    if (args.help) {
+        showHelp();
+        Deno.exit(0);
+    }
+
+    // Validate port number
+    if (isNaN(args.port) || args.port < 1 || args.port > 65535) {
+        console.error('❌ Invalid port number. Must be between 1 and 65535.');
+        Deno.exit(1);
+    }
+
+    try {
+        startServer({
+            port: args.port,
+            hostname: args.hostname,
+        });
+    } catch (error) {
+        console.error('❌ Failed to start server:', (error as Error).message);
+        Deno.exit(1);
+    }
+}
+
+// Export for use as a library
+export { handleDown, handleUp, serverHandler, startServer };
