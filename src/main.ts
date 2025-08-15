@@ -2,6 +2,7 @@
 import { route, serveDir } from '@std/http';
 import { parseArgs } from '@std/cli/parse-args';
 import { config } from './global.ts';
+import { fromFileUrl } from '@std/path';
 
 // Generate content stream for download endpoint
 function generateContentStream(numBytes = 0): ReadableStream<Uint8Array> {
@@ -97,8 +98,11 @@ async function handleUp(req: Request): Promise<Response> {
     return response;
 }
 
+const staticRoot = new URL('../static/', import.meta.url).toString();
 const serveDirOptions = {
-    fsRoot: `${import.meta.dirname}/../static/`,
+    fsRoot: staticRoot.startsWith('file:')
+        ? fromFileUrl(staticRoot)
+        : staticRoot,
     showIndex: true,
     quiet: true,
 };

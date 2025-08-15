@@ -11,6 +11,7 @@
     "jsr:@std/internal@^1.0.10": "1.0.10",
     "jsr:@std/media-types@^1.0.3": "1.1.0",
     "jsr:@std/net@^1.0.4": "1.0.5",
+    "jsr:@std/path@1.0.6": "1.0.6",
     "jsr:@std/path@^1.0.6": "1.1.2",
     "jsr:@std/streams@^1.0.6": "1.0.11"
   },
@@ -41,7 +42,7 @@
         "jsr:@std/fmt",
         "jsr:@std/media-types",
         "jsr:@std/net",
-        "jsr:@std/path",
+        "jsr:@std/path@^1.0.6",
         "jsr:@std/streams"
       ]
     },
@@ -53,6 +54,9 @@
     },
     "@std/net@1.0.5": {
       "integrity": "b759d8c5e17d997e164af6379d57764668c6714f30109685eec0fd5e194d501a"
+    },
+    "@std/path@1.0.6": {
+      "integrity": "ab2c55f902b380cf28e0eec501b4906e4c1960d13f00e11cfbcd21de15f18fed"
     },
     "@std/path@1.1.2": {
       "integrity": "c0b13b97dfe06546d5e16bf3966b1cadf92e1cc83e56ba5476ad8b498d9e3038",
@@ -69,7 +73,8 @@
       "jsr:@std/assert@1.0.6",
       "jsr:@std/cli@1.0.6",
       "jsr:@std/dotenv@0.225.2",
-      "jsr:@std/http@1.0.7"
+      "jsr:@std/http@1.0.7",
+      "jsr:@std/path@1.0.6"
     ]
   }
 }
