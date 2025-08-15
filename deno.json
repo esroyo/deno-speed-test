@@ -14,7 +14,7 @@
         "coverage": "rm -rf coverage && deno task test --reporter=dot --coverage=coverage && deno coverage --lcov --output=coverage.lcov --exclude='static' coverage && genhtml -o coverage/report coverage.lcov",
         "dev": "deno run --watch -R --allow-env --allow-read --allow-net src/main.ts",
         "fmt": "deno fmt src",
-        "release": "git tag release && git push origin release && git tag -d release",
+        "bump": "git tag bump && git push origin bump && git tag -d bump",
         "test": "deno test --allow-env --allow-read"
     },
     "fmt": {
