@@ -18,6 +18,9 @@ jobs:
               run: sudo apt-get install -y lcov
             - name: Git Checkout Deno Module
               uses: actions/checkout@v2
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
             - name: Use Deno Version ${{ matrix.deno-version }}
               uses: denolib/setup-deno@v2
               with:
