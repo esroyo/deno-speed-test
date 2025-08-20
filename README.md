@@ -2,6 +2,7 @@
 
 [![JSR](https://jsr.io/badges/@esroyo/deno-speed-test)](https://jsr.io/@esroyo/deno-speed-test)
 [![JSR Score](https://jsr.io/badges/@esroyo/deno-speed-test/score)](https://jsr.io/@esroyo/deno-speed-test)
+[![ci](https://github.com/esroyo/deno-speed-test/actions/workflows/ci.yml/badge.svg)](https://github.com/esroyo/deno-speed-test/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/esroyo/deno-speed-test/graph/badge.svg?token=C01UTG74LH)](https://codecov.io/gh/esroyo/deno-speed-test)
 
 ## Motivation
