@@ -41,6 +41,8 @@
             "**/*_test.ts",
             "**/*.test.ts",
             "**/test_*.ts",
+            "**/*_bench.ts",
+            "**/*.bench.ts",
             "**/*.snap",
             ".github/",
             "coverage/",
